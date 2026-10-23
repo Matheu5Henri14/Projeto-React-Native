@@ -23,9 +23,9 @@ export default function RegisterScreen({ navigation }) {
   const [confirmarCodigo, setConfirmarCodigo] = useState('');
 
   const handleRegister = () => {
-    // Como a Entrega 2 usa dados simulados, basta redirecionar para a tela principal do disfarce (ex: Lista de Notas)
+    
     if (navigation) {
-      navigation.navigate('NotesList'); // Ajuste para o nome da rota do seu grupo
+      navigation.navigate('NotesList'); 
     } else {
       console.log('Conta criada (simulado):', { nome, telefone, codigoAcesso });
     }
@@ -33,7 +33,7 @@ export default function RegisterScreen({ navigation }) {
 
   const handleGoToLogin = () => {
     if (navigation) {
-      navigation.navigate('Login'); // Ajuste para o nome da sua rota de Login
+      navigation.navigate('Login');
     }
   };
 
@@ -47,15 +47,13 @@ export default function RegisterScreen({ navigation }) {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Botão superior de voltar "< Entrar" */}
+
           <TouchableOpacity style={styles.backButton} onPress={handleGoToLogin}>
             <Text style={styles.backButtonText}>‹ Entrar</Text>
           </TouchableOpacity>
 
-          {/* Título Principal */}
           <Text style={styles.headerTitle}>Criar conta</Text>
 
-          {/* Formulário Componentizado */}
           <CustomInput
             label="Nome"
             placeholder="Seu nome"
@@ -107,19 +105,16 @@ export default function RegisterScreen({ navigation }) {
             onChangeText={setConfirmarCodigo}
           />
 
-          {/* Aviso Amarelo do Protótipo */}
           <PrototypeAlert
             title="PROTÓTIPO · SENHA E CÓDIGO SÃO DIFERENTES"
             description="A senha entra na conta do app. O código de acesso abre a Área de Apoio quando digitado no final da nota mestre."
           />
 
-          {/* Botão Criar Conta */}
           <PrimaryButton 
             title="Criar conta" 
             onPress={handleRegister} 
           />
 
-          {/* Rodapé "Já tem conta? Entrar" */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Já tem conta? </Text>
             <TouchableOpacity onPress={handleGoToLogin}>
@@ -135,7 +130,7 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAF9F5', // Fundo creme suave idêntico ao protótipo do Figma
+    backgroundColor: '#FAF9F5',
   },
   flex: {
     flex: 1,
