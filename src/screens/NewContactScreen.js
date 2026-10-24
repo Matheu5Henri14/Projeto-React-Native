@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackHeader from '../components/BackHeader';
 import FormField from '../components/FormField';
-import PrimaryButton from '../components/PrimaryButton';
+import SupportButton from '../components/SupportButton';
 import { useContacts } from '../config/ContactsContext';
 import { confirmAction } from '../config/confirm';
 import { formatPhone, isValidPhone } from '../config/phone';
@@ -135,8 +135,8 @@ export default function NewContactScreen({ navigation, route }) {
         </ScrollView>
 
         <View style={styles.footer}>
-          <PrimaryButton label="Salvar contato" onPress={handleSave} />
-          <PrimaryButton label="Cancelar" variant="outline" onPress={() => navigation.goBack()} />
+          <SupportButton label="Salvar contato" onPress={handleSave} />
+          <SupportButton label="Cancelar" variant="outline" onPress={() => navigation.goBack()} />
           {isEditing && (
             <Pressable
               onPress={handleDelete}

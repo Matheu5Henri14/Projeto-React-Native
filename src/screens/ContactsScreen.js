@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import ContactCard from '../components/ContactCard';
-import PrimaryButton from '../components/PrimaryButton';
+import SupportButton from '../components/SupportButton';
 import { useContacts } from '../config/ContactsContext';
 import { colors, spacing } from '../config/theme';
 
@@ -49,7 +49,7 @@ export default function ContactsScreen({ navigation }) {
       />
 
       <View style={styles.footer}>
-        <PrimaryButton
+        <SupportButton
           label="+ Adicionar contato"
           onPress={() => navigation.navigate('NewContact')}
         />

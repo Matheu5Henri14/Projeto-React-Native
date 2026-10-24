@@ -1,7 +1,7 @@
 import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors, radius } from '../config/theme';
 
-export default function PrimaryButton({ label, onPress, variant = 'primary', style }) {
+export default function SupportButton({ label, onPress, variant = 'primary', style }) {
   const isPrimary = variant === 'primary';
 
   return (

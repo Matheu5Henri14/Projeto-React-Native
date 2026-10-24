@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BackHeader from '../components/BackHeader';
 import FormField from '../components/FormField';
 import ChipSelector from '../components/ChipSelector';
-import PrimaryButton from '../components/PrimaryButton';
+import SupportButton from '../components/SupportButton';
 import { useRecords } from '../config/RecordsContext';
 import { confirmAction } from '../config/confirm';
 import { recordTypes } from '../config/recordTypes';
@@ -120,8 +120,8 @@ export default function NewRecordScreen({ navigation, route }) {
         </ScrollView>
 
         <View style={styles.footer}>
-          <PrimaryButton label="Salvar registro" onPress={handleSave} />
-          <PrimaryButton label="Cancelar" variant="outline" onPress={() => navigation.goBack()} />
+          <SupportButton label="Salvar registro" onPress={handleSave} />
+          <SupportButton label="Cancelar" variant="outline" onPress={() => navigation.goBack()} />
 
           {isEditing && (
             <Pressable

@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import RecordCard from '../components/RecordCard';
-import PrimaryButton from '../components/PrimaryButton';
+import SupportButton from '../components/SupportButton';
 import { useRecords } from '../config/RecordsContext';
 import { colors, spacing } from '../config/theme';
 
@@ -52,7 +52,7 @@ export default function RecordsScreen({ navigation }) {
       />
 
       <View style={styles.footer}>
-        <PrimaryButton
+        <SupportButton
           label="+ Novo registro"
           onPress={() => navigation.navigate('NewRecord')}
         />
