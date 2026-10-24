@@ -13,7 +13,7 @@ export default function ContactsScreen({ navigation }) {
   const handleExit = () => {
     // Volta ao bloco de notas (disfarce). A rota 'Notes' precisa existir no navigator raiz.
     const root = navigation.getParent()?.getParent() ?? navigation;
-    root.reset({ index: 0, routes: [{ name: 'Notes' }] });
+    root.reset({ index: 0, routes: [{ name: 'NotesList' }] });
   };
 
   return (
