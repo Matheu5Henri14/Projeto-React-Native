@@ -3,10 +3,16 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import SecretHub from '../screens/SecretHub';
 import ContactsStack from './ContactsStack';
+import RecordsStack from './RecordsStack';
 import { colors } from '../config/theme';
-// import RecordsStack from './RecordsStack';
 
 const Tab = createBottomTabNavigator();
+
+// Esconde a barra de abas nas telas de formulário, como no protótipo do Figma.
+const hideTabsOn = (formRouteName) => ({ route }) => ({
+  tabBarStyle:
+    getFocusedRouteNameFromRoute(route) === formRouteName ? { display: 'none' } : undefined,
+});
 
 export default function AppTabs() {
   return (
@@ -22,17 +28,14 @@ export default function AppTabs() {
       <Tab.Screen
         name="Contacts"
         component={ContactsStack}
-        options={({ route }) => ({
-          title: 'Contatos',
-          // Esconde as abas no formulário, como no protótipo do Figma.
-          tabBarStyle:
-            getFocusedRouteNameFromRoute(route) === 'NewContact'
-              ? { display: 'none' }
-              : undefined,
-        })}
+        options={(props) => ({ title: 'Contatos', ...hideTabsOn('NewContact')(props) })}
       />
 
-      {/* <Tab.Screen name="Records" component={RecordsStack} options={{ title: 'Registros' }} /> */}
+      <Tab.Screen
+        name="Records"
+        component={RecordsStack}
+        options={(props) => ({ title: 'Registros', ...hideTabsOn('NewRecord')(props) })}
+      />
     </Tab.Navigator>
   );
 }

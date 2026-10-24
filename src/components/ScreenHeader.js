@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, spacing, radius } from '../config/theme';
 
-export default function SecretHub({ title, onExit }) {
+export default function SecretHeader({ title, onExit }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title} accessibilityRole="header">
