@@ -15,7 +15,7 @@ export default function SecretHub({ navigation }) {
     // Volta ao bloco de notas (disfarce) e limpa o histórico de navegação.
     // A rota 'Notes' precisa existir no navigator raiz.
     const root = navigation.getParent() ?? navigation;
-    root.reset({ index: 0, routes: [{ name: 'Notes' }] });
+    root.reset({ index: 0, routes: [{ name: 'NotesList' }] });
   };
 
   const handleSilentAlert = async () => {
