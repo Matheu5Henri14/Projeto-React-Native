@@ -12,7 +12,6 @@ import {
 
 import CustomInput from '../components/CustomInput';
 import PrimaryButton from '../components/PrimaryButton';
-import PrototypeAlert from '../components/PrototypeAlert';
 
 export default function LoginScreen({ navigation }) {
   const [telefone, setTelefone] = useState('');
@@ -29,7 +28,6 @@ export default function LoginScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.topSection}>
-          {/* Ícone Amarelo de Notas */}
           <View style={styles.logoBox}>
             <View style={styles.logoLineFull} />
             <View style={styles.logoLineFull} />
@@ -42,7 +40,6 @@ export default function LoginScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* Inputs Reutilizados */}
         <CustomInput
           label="Telefone"
           placeholder="(11) 9XXXX-XXXX"
@@ -67,14 +64,8 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
         </TouchableOpacity>
 
-        <PrototypeAlert
-          title="PROTÓTIPO · CÓDIGO DE ACESSO NÃO É PEDIDO AQUI"
-          description="O login usa só telefone e senha. O código de acesso é digitado no final da nota mestre, depois do login."
-        />
-
         <View style={styles.spacer} />
 
-        {/* Rodapé */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Ainda não tem conta? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>

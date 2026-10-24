@@ -9,11 +9,9 @@ import {
   StatusBar,
 } from 'react-native';
 
-import PrototypeAlert from '../components/PrototypeAlert';
 import NumericKeypad from '../components/NumericKeypad';
 
 export default function NoteEditorScreen({ navigation }) {
-  // Inicia com 4 dígitos simulados para exibir "• • • •" igual ao Figma, ou permite apagar e digitar de novo
   const [pin, setPin] = useState('1234');
 
   const handlePressNumber = (num) => {
@@ -21,7 +19,6 @@ export default function NoteEditorScreen({ navigation }) {
       const nextPin = pin + num;
       setPin(nextPin);
 
-      // GATILHO DO DISFARCE: Ao completar 4 dígitos no final da nota, abre a Área de Apoio (Tela 5)
       if (nextPin.length === 4) {
         setTimeout(() => {
           navigation.navigate('SupportArea');
@@ -42,7 +39,6 @@ export default function NoteEditorScreen({ navigation }) {
     }
   };
 
-  // Transforma cada dígito em uma bolinha "•" separada por espaço
   const maskedPin = pin
     .split('')
     .map(() => '•')
@@ -51,7 +47,6 @@ export default function NoteEditorScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
-        {/* Topo: < Notas | Concluído */}
         <View style={styles.topBar}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.backText}>‹ Notas</Text>
@@ -61,7 +56,6 @@ export default function NoteEditorScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Conteúdo da Nota Mestre */}
         <Text style={styles.noteTitle}>Lembretes</Text>
         <Text style={styles.noteDate}>5 de outubro de 2026</Text>
 
@@ -79,15 +73,8 @@ export default function NoteEditorScreen({ navigation }) {
             Código: <Text style={styles.dotsText}>{maskedPin}</Text>
           </Text>
         </View>
-
-        {/* Aviso do Fluxo de Acesso */}
-        <PrototypeAlert
-          title="PROTÓTIPO · FLUXO DE ACESSO"
-          description="Ao digitar o PIN cadastrado no final da nota, o app abre a Área de Apoio (Tela 5)."
-        />
       </View>
 
-      {/* Teclado Numérico Inferior */}
       <NumericKeypad
         onPressNumber={handlePressNumber}
         onBackspace={handleBackspace}
