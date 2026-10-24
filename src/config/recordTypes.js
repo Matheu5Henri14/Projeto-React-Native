@@ -1,0 +1,1 @@
+export const recordTypes = ['Ameaça verbal', 'Controle', 'Agressão física', 'Outro'];
