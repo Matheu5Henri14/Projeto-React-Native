@@ -49,7 +49,7 @@ export default function RegisterScreen({ navigation }) {
         >
 
           <TouchableOpacity style={styles.backButton} onPress={handleGoToLogin}>
-            <Text style={styles.backButtonText}>‹ Entrar</Text>
+            <Text style={styles.backButtonText}>‹ Voltar</Text>
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>Criar conta</Text>
