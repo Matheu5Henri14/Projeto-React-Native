@@ -7,11 +7,11 @@ import {
   TouchableOpacity, 
   StyleSheet,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  StatusBar
 } from 'react-native';
 
 import CustomInput from '../components/CustomInput';
-import PrototypeAlert from '../components/PrototypeAlert';
 import PrimaryButton from '../components/PrimaryButton';
 
 export default function RegisterScreen({ navigation }) {
@@ -23,11 +23,8 @@ export default function RegisterScreen({ navigation }) {
   const [confirmarCodigo, setConfirmarCodigo] = useState('');
 
   const handleRegister = () => {
-    
     if (navigation) {
-      navigation.navigate('NotesList'); 
-    } else {
-      console.log('Conta criada (simulado):', { nome, telefone, codigoAcesso });
+      navigation.navigate('NotesList');
     }
   };
 
@@ -47,9 +44,8 @@ export default function RegisterScreen({ navigation }) {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-
           <TouchableOpacity style={styles.backButton} onPress={handleGoToLogin}>
-            <Text style={styles.backButtonText}>‹ Voltar</Text>
+            <Text style={styles.backButtonText}>‹ Entrar</Text>
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>Criar conta</Text>
@@ -105,15 +101,12 @@ export default function RegisterScreen({ navigation }) {
             onChangeText={setConfirmarCodigo}
           />
 
-          <PrototypeAlert
-            title="PROTÓTIPO · SENHA E CÓDIGO SÃO DIFERENTES"
-            description="A senha entra na conta do app. O código de acesso abre a Área de Apoio quando digitado no final da nota mestre."
-          />
-
-          <PrimaryButton 
-            title="Criar conta" 
-            onPress={handleRegister} 
-          />
+          <View style={styles.buttonContainer}>
+            <PrimaryButton 
+              title="Criar conta" 
+              onPress={handleRegister} 
+            />
+          </View>
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Já tem conta? </Text>
@@ -131,6 +124,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FAF9F5',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   flex: {
     flex: 1,
@@ -154,6 +148,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#111111',
     marginBottom: 20,
+  },
+  buttonContainer: {
+    marginTop: 10,
   },
   footer: {
     flexDirection: 'row',
