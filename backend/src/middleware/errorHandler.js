@@ -1,0 +1,1 @@
+module.exports=(e,req,res,next)=>{if(res.headersSent)return next(e);const s=e.status||500;if(s>=500)console.error(e);res.status(s).json({error:s>=500?'Erro interno do servidor.':e.message,...(process.env.NODE_ENV!=='production'&&s>=500?{detail:e.message}:{})})};
