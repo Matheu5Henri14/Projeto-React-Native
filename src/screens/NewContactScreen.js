@@ -19,12 +19,14 @@ import FormField from '../components/FormField';
 import SupportButton from '../components/SupportButton';
 
 import { useContacts } from '../config/ContactsContext';
+import useQuickExit from '../config/useQuickExit';
 import { confirmAction } from '../config/confirm';
 import { formatPhone, isValidPhone } from '../config/phone';
 import { colors, spacing, radius } from '../config/theme';
 
 export default function NewContactScreen({ navigation, route }) {
   const contactId = route.params?.contactId;
+  const handleExit = useQuickExit(navigation);
 
   const {
     contacts,
@@ -165,6 +167,7 @@ export default function NewContactScreen({ navigation, route }) {
           }
           subtitle="Alguém de confiança que será avisada quando você pedir ajuda."
           onBack={() => navigation.goBack()}
+          onExit={handleExit}
         />
 
         <ScrollView
