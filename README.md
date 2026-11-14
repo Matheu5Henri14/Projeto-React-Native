@@ -374,15 +374,16 @@ A API valida que latitude e longitude sejam informadas juntas. A localização �
 
 | Entregável | Arquivos principais | Responsável |
 |---|---|---|
-| Back-end Node.js/Express e rotas REST | `backend/src/` | _a preencher_ |
-| Modelagem do banco SQL e relacionamentos | `backend/database/` | _a preencher_ |
-| Camada de disfarce com API (login, cadastro, notas, gatilho do PIN) | `src/screens/Login`, `Register`, `NotesList`, `NoteEditor`, `src/config/NotesContext.js` | _a preencher_ |
-| Área de Apoio (contatos, registros, alerta, Saída Rápida) | `src/screens/SecretHub`, `Contacts`, `Records` | _a preencher_ |
+| Back-end Node.js/Express e rotas REST | `backend/src/` | Matheus e Gabriel |
+| Modelagem do banco SQL e relacionamentos | `backend/database/` | Matheus e Gabriel |
+| Camada de disfarce com API (cadastro, login, lista de notas, editor de notas, gatilho do PIN) | `src/screens/RegisterScreen.js`, `LoginScreen.js`, `NotesListScreen.js`, `NoteEditorScreen.js`, `src/config/NotesContext.js` | Matheus Henrique Evaristo Souza |
+| Painel principal da Área de Apoio (card do indicador de risco) | `src/screens/SecretHub.js`, `src/components/RiskIndicatorCard.js` | Matheus Henrique Evaristo Souza |
+| Contatos de apoio e Registros sigilosos (telas e formulários) | `src/screens/Contacts`, `Records`, `NewContactScreen.js`, `NewRecordScreen.js` | Gabriel de Paiva Messias Silva |
 | Data Science: qualidade dos dados e tratamento | `dataScience/` (seções 3 e 4) | Matheus Henrique Evaristo Souza |
 | Data Science: EDA e plano de modelagem | `dataScience/` (seções 5 e 6) | Gabriel de Paiva Messias Silva |
-| Data Science: modelagem e validação cruzada | `dataScience/` (seção 7) | _a preencher_ |
-| Integração do modelo no app | `backend/src/routes/indicator.routes.js`, `src/components/RiskIndicatorCard.js` | _a preencher_ |
-| Documentação e `USO_IA.md` | `README.md`, `USO_IA.md` | _a preencher_ |
+| Data Science: modelagem e validação cruzada | `dataScience/` (seção 7) | Matheus e Gabriel |
+| Integração do modelo no app | `backend/src/routes/indicator.routes.js` | Matheus e Gabriel |
+| Documentação e `USO_IA.md` | `README.md`, `USO_IA.md` | Matheus e Gabriel |
 
 ### Exigências da entrega → onde estão
 
