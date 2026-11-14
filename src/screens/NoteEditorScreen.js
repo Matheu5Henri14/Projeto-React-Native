@@ -3,87 +3,170 @@ import {
   SafeAreaView,
   View,
   Text,
+  TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
   Platform,
   StatusBar,
+  Alert,
 } from 'react-native';
 
-import NumericKeypad from '../components/NumericKeypad';
+import { useNotes } from '../config/NotesContext';
+import { confirmAction } from '../config/confirm';
+import { formatLongDate } from '../config/dateTime';
 
-export default function NoteEditorScreen({ navigation }) {
-  const [pin, setPin] = useState('1234');
+export default function NoteEditorScreen({ navigation, route }) {
+  const noteId = route.params?.noteId;
 
-  const handlePressNumber = (num) => {
-    if (pin.length < 4) {
-      const nextPin = pin + num;
-      setPin(nextPin);
+  const { notes, addNote, updateNote, removeNote } = useNotes();
 
-      if (nextPin.length === 4) {
-        setTimeout(() => {
-          navigation.navigate('SupportArea');
-        }, 250);
-      }
+  const existing = notes.find((note) => String(note.id) === String(noteId));
+  const isEditing = !!existing;
+
+  const [title, setTitle] = useState(existing?.title ?? '');
+  const [content, setContent] = useState(existing?.content ?? '');
+  const [saving, setSaving] = useState(false);
+
+  const dateLabel = formatLongDate(existing?.updatedAt ?? new Date());
+
+  const changed =
+    title !== (existing?.title ?? '') || content !== (existing?.content ?? '');
+
+  const resolveTitle = () => {
+    const typed = title.trim();
+
+    if (typed) {
+      return typed.slice(0, 150);
     }
+
+    const firstLine = content.trim().split('\n')[0];
+
+    return (firstLine || 'Nova nota').slice(0, 150);
   };
 
-  const handleBackspace = () => {
-    setPin((prev) => prev.slice(0, -1));
-  };
+  const handleDone = async () => {
+    if (saving) {
+      return;
+    }
 
-  const handleConcluido = () => {
-    if (pin.length === 4) {
-      navigation.navigate('SupportArea');
-    } else {
+    const empty = !title.trim() && !content.trim();
+
+    if (!changed || (empty && !isEditing)) {
       navigation.goBack();
+      return;
+    }
+
+    const data = {
+      title: resolveTitle(),
+      content: content.trim() || null,
+    };
+
+    setSaving(true);
+
+    try {
+      if (isEditing) {
+        await updateNote(noteId, data);
+      } else {
+        await addNote(data);
+      }
+
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Não foi possível salvar', error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
-  const maskedPin = pin
-    .split('')
-    .map(() => '•')
-    .join(' ');
+  const handleDelete = () => {
+    if (!existing) {
+      return;
+    }
+
+    confirmAction({
+      title: 'Excluir nota',
+      message: `Excluir "${existing.title}"?`,
+      confirmText: 'Excluir',
+      destructive: true,
+      onConfirm: async () => {
+        try {
+          await removeNote(noteId);
+          navigation.goBack();
+        } catch (error) {
+          Alert.alert('Não foi possível excluir', error.message);
+        }
+      },
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.content}>
-        <View style={styles.topBar}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backText}>‹ Notas</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleConcluido}>
-            <Text style={styles.doneText}>Concluído</Text>
-          </TouchableOpacity>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.content}>
+          <View style={styles.topBar}>
+            <TouchableOpacity onPress={handleDone} disabled={saving}>
+              <Text style={styles.backText}>‹ Notas</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleDone} disabled={saving}>
+              <Text style={styles.doneText}>
+                {saving ? 'Salvando...' : 'Concluído'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <TextInput
+              style={styles.noteTitle}
+              placeholder="Título"
+              placeholderTextColor="#C7C7CC"
+              value={title}
+              onChangeText={setTitle}
+              maxLength={150}
+              autoCapitalize="sentences"
+            />
+
+            <Text style={styles.noteDate}>{dateLabel}</Text>
+
+            <TextInput
+              style={styles.bodyInput}
+              placeholder="Escreva sua nota..."
+              placeholderTextColor="#C7C7CC"
+              value={content}
+              onChangeText={setContent}
+              multiline
+              textAlignVertical="top"
+              autoCapitalize="sentences"
+            />
+
+            {isEditing && (
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={handleDelete}
+              >
+                <Text style={styles.deleteText}>Excluir nota</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
         </View>
-
-        <Text style={styles.noteTitle}>Lembretes</Text>
-        <Text style={styles.noteDate}>5 de outubro de 2026</Text>
-
-        <View style={styles.noteBody}>
-          <Text style={styles.bodyText}>Comprar:</Text>
-          <Text style={styles.bodyText}>• leite</Text>
-          <Text style={styles.bodyText}>• pão</Text>
-          <Text style={styles.bodyText}>• ovos</Text>
-
-          <Text style={[styles.bodyText, styles.paragraphSpacing]}>
-            Consulta dentista: quinta, 15h
-          </Text>
-
-          <Text style={[styles.bodyText, styles.paragraphSpacing]}>
-            Código: <Text style={styles.dotsText}>{maskedPin}</Text>
-          </Text>
-        </View>
-      </View>
-
-      <NumericKeypad
-        onPressNumber={handlePressNumber}
-        onBackspace={handleBackspace}
-      />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#FAF9F5',
@@ -110,31 +193,36 @@ const styles = StyleSheet.create({
     color: '#D98A00',
     fontWeight: '700',
   },
+  scrollContent: {
+    paddingBottom: 32,
+  },
   noteTitle: {
     fontSize: 26,
     fontWeight: '800',
     color: '#111111',
     marginBottom: 4,
+    paddingVertical: 0,
   },
   noteDate: {
     fontSize: 12,
     color: '#AEAEB2',
     marginBottom: 16,
   },
-  noteBody: {
-    marginBottom: 16,
-  },
-  bodyText: {
+  bodyInput: {
     fontSize: 15,
     color: '#1C1C1E',
     lineHeight: 22,
+    minHeight: 220,
+    paddingVertical: 0,
   },
-  paragraphSpacing: {
-    marginTop: 14,
+  deleteButton: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginTop: 20,
   },
-  dotsText: {
-    fontSize: 16,
-    fontWeight: '800',
-    letterSpacing: 2,
+  deleteText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#D32F2F',
   },
 });

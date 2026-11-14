@@ -8,17 +8,66 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
+  Alert,
 } from 'react-native';
 
 import CustomInput from '../components/CustomInput';
 import PrimaryButton from '../components/PrimaryButton';
 
+import { useAuth } from '../config/AuthContext';
+import { formatPhone, isValidPhone } from '../config/phone';
+
 export default function LoginScreen({ navigation }) {
+  const { login, loading } = useAuth();
+
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
 
-  const handleLogin = () => {
-    navigation.navigate('NotesList');
+  const validate = () => {
+    const next = {};
+
+    if (!isValidPhone(telefone)) {
+      next.telefone = 'Informe o telefone com DDD.';
+    }
+
+    if (!senha) {
+      next.senha = 'Informe a senha.';
+    }
+
+    setErrors(next);
+
+    return Object.keys(next).length === 0;
+  };
+
+  const handleLogin = async () => {
+    setApiError('');
+
+    if (loading || !validate()) {
+      return;
+    }
+
+    try {
+      await login({
+        telefone: telefone.replace(/\D/g, ''),
+        senha,
+      });
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'NotesList' }],
+      });
+    } catch (error) {
+      setApiError(error.message);
+    }
+  };
+
+  const handleForgotPassword = () => {
+    Alert.alert(
+      'Recuperar senha',
+      'A recuperação de senha não está disponível neste protótipo.'
+    );
   };
 
   return (
@@ -45,7 +94,9 @@ export default function LoginScreen({ navigation }) {
           placeholder="(11) 9XXXX-XXXX"
           keyboardType="phone-pad"
           value={telefone}
-          onChangeText={setTelefone}
+          onChangeText={(text) => setTelefone(formatPhone(text))}
+          error={errors.telefone}
+          editable={!loading}
         />
 
         <CustomInput
@@ -54,13 +105,24 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
+          error={errors.senha}
+          editable={!loading}
         />
 
+        {!!apiError && <Text style={styles.apiError}>{apiError}</Text>}
+
         <View style={styles.buttonSpacing}>
-          <PrimaryButton title="Entrar" onPress={handleLogin} />
+          <PrimaryButton
+            title="Entrar"
+            onPress={handleLogin}
+            loading={loading}
+          />
         </View>
 
-        <TouchableOpacity style={styles.forgotPassword}>
+        <TouchableOpacity
+          style={styles.forgotPassword}
+          onPress={handleForgotPassword}
+        >
           <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
         </TouchableOpacity>
 
@@ -129,6 +191,11 @@ const styles = StyleSheet.create({
   },
   buttonSpacing: {
     marginTop: 6,
+  },
+  apiError: {
+    fontSize: 13,
+    color: '#D32F2F',
+    marginBottom: 8,
   },
   forgotPassword: {
     alignItems: 'center',

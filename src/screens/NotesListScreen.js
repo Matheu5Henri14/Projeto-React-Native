@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,50 +9,93 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
+  Alert,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 import NoteCard from '../components/NoteCard';
 
-const MOCK_NOTES = [
-  {
-    id: '1',
-    title: 'Lista de compras',
-    preview: 'Leite, pão, ovos, café, frutas da semana',
-    date: 'Hoje',
-  },
-  {
-    id: '2',
-    title: 'Tarefas da semana',
-    preview: 'Pagar conta de luz, ligar para o dentista',
-    date: 'Ontem',
-  },
-  {
-    id: '3',
-    title: 'Receita de bolo',
-    preview: '2 xícaras de farinha, 3 ovos, 1 xícara de açúcar',
-    date: 'Segunda',
-  },
-  {
-    id: '4',
-    title: 'Lembretes',
-    preview: 'Consulta quinta às 15h, aniversário da tia',
-    date: '28/09',
-  },
-  {
-    id: '5',
-    title: 'Ideias de presente',
-    preview: 'Livro, planta, caneca personalizada',
-    date: '20/09',
-  },
-];
+import { useAuth } from '../config/AuthContext';
+import { useNotes } from '../config/NotesContext';
+import { confirmAction } from '../config/confirm';
+import { formatRelativeDate } from '../config/dateTime';
 
 export default function NotesListScreen({ navigation }) {
   const [busca, setBusca] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
-  const notasFiltradas = MOCK_NOTES.filter(
+  const { token, unlock } = useAuth();
+  const { notes, loading, error, refreshNotes, removeNote } = useNotes();
+
+  useEffect(() => {
+    if (!token) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [token, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (token) {
+        refreshNotes().catch(() => {});
+      }
+    }, [token, refreshNotes])
+  );
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await refreshNotes();
+    } catch (err) {
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleSubmitSearch = async () => {
+    const text = busca.trim();
+
+    if (!/^\d{4,8}$/.test(text)) {
+      return;
+    }
+
+    try {
+      const unlocked = await unlock(text);
+
+      if (unlocked) {
+        setBusca('');
+        navigation.navigate('SupportArea');
+      }
+    } catch (err) {
+    }
+  };
+
+  const handleDeleteNote = (note) => {
+    confirmAction({
+      title: 'Excluir nota',
+      message: `Excluir "${note.title}"?`,
+      confirmText: 'Excluir',
+      destructive: true,
+      onConfirm: async () => {
+        try {
+          await removeNote(note.id);
+        } catch (err) {
+          Alert.alert('Não foi possível excluir', err.message);
+        }
+      },
+    });
+  };
+
+  const termo = busca.trim().toLowerCase();
+
+  const notasFiltradas = notes.filter(
     (item) =>
-      item.title.toLowerCase().includes(busca.toLowerCase()) ||
-      item.preview.toLowerCase().includes(busca.toLowerCase())
+      !termo ||
+      (item.title || '').toLowerCase().includes(termo) ||
+      (item.content || '').toLowerCase().includes(termo)
   );
 
   return (
@@ -67,21 +110,48 @@ export default function NotesListScreen({ navigation }) {
           placeholderTextColor="#8E8E93"
           value={busca}
           onChangeText={setBusca}
+          onSubmitEditing={handleSubmitSearch}
+          returnKeyType="search"
+          autoCapitalize="none"
+          autoCorrect={false}
         />
 
         {/* Lista de Notas */}
         <FlatList
           data={notasFiltradas}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           renderItem={({ item }) => (
             <NoteCard
               title={item.title}
               preview={item.preview}
-              date={item.date}
-              onPress={() => navigation.navigate('NoteEditor', { note: item })}
+              date={formatRelativeDate(item.updatedAt)}
+              onPress={() => navigation.navigate('NoteEditor', { noteId: item.id })}
+              onLongPress={() => handleDeleteNote(item)}
             />
           )}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={styles.emptyTitle}>
+                {loading
+                  ? 'Carregando notas...'
+                  : error
+                    ? 'Não foi possível carregar'
+                    : termo
+                      ? 'Nenhuma nota encontrada'
+                      : 'Nenhuma nota ainda'}
+              </Text>
+
+              <Text style={styles.emptyText}>
+                {error ||
+                  (termo
+                    ? 'Tente buscar por outro termo.'
+                    : 'Toque em + para criar sua primeira nota.')}
+              </Text>
+            </View>
+          }
           contentContainerStyle={styles.listContent}
         />
 
@@ -129,6 +199,22 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+    flexGrow: 1,
+  },
+  empty: {
+    alignItems: 'center',
+    paddingVertical: 48,
+    gap: 6,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1C1C1E',
+  },
+  emptyText: {
+    fontSize: 14,
+    textAlign: 'center',
+    color: '#8E8E93',
   },
   footer: {
     flexDirection: 'row',

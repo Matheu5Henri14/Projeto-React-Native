@@ -100,28 +100,25 @@ export function AuthProvider({ children }) {
 
   // Bloqueia novamente a área restrita.
   const lock = useCallback(async () => {
-    if (!token) {
-      setUnlocked(false);
+    const currentToken = token;
+
+    setUnlocked(false);
+
+    if (!currentToken) {
       return;
     }
 
-    try {
-      const result = await apiRequest('/auth/lock', {
-        method: 'POST',
-        token,
+    apiRequest('/auth/lock', {
+      method: 'POST',
+      token: currentToken,
+    })
+      .then((result) => {
+        setToken(result.token);
+      })
+      .catch(() => {
+        setToken(null);
+        setUser(null);
       });
-
-      setToken(result.token);
-      setUnlocked(false);
-    } catch (error) {
-      // Se não for possível bloquear remotamente,
-      // encerra a sessão local para não manter acesso privilegiado.
-      setToken(null);
-      setUser(null);
-      setUnlocked(false);
-
-      throw error;
-    }
   }, [token]);
 
   // Encerra a sessão.

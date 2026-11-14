@@ -14,6 +14,7 @@ Envie `Authorization: Bearer <token>`. O login emite token normal; o PIN é vali
 | POST | `/auth/register` | Público | `{nome, telefone, senha, codigoAcesso}` |
 | POST | `/auth/login` | Público | `{telefone, senha}` |
 | POST | `/auth/unlock` | Token normal | `{codigoAcesso}` |
+| POST | `/auth/lock` | Token | Sem corpo. Devolve `{unlocked:false, token}` com token normal (Saída Rápida) |
 | GET | `/auth/me` | Token | Perfil e estado `unlocked` |
 | PATCH | `/auth/me` | Token | `{nome? , telefone?}` |
 | POST | `/auth/change-password` | Token | `{senhaAtual, novaSenha}` |
@@ -34,6 +35,29 @@ Envie `Authorization: Bearer <token>`. O login emite token normal; o PIN é vali
 | DELETE | `/registros/:id` | Desbloqueado | Remove registro |
 | POST | `/alertas` | Desbloqueado | `{mensagem?, latitude?, longitude?}` |
 | GET | `/alertas` | Desbloqueado | Histórico de solicitações |
+| GET | `/indicador-risco` | Desbloqueado | Indicador do modelo de Data Science (Baixo/Moderado/Alto) + métricas + aviso acadêmico |
+
+## Indicador de risco (modelo de Data Science)
+
+`GET /indicador-risco` lê os registros sigilosos da usuária, monta um perfil (`viol_fisic` e `viol_psico` a partir do tipo do registro; demais variáveis entram pela média da base) e aplica a Regressão Logística exportada por `dataScience/Entrega2_DS_Modelo.ipynb` em `backend/data/modelo_ds.json`.
+
+Resposta (resumo):
+
+```json
+{
+  "disponivel": true,
+  "nivel": "Moderado",
+  "probabilidadeEstimada": 52.7,
+  "registrosAnalisados": 3,
+  "variaveisUsadas": [{ "variavel": "viol_fisic", "valor": "Não" }],
+  "mensagem": "Estimativa da chance de a violência já ter ocorrido outras vezes ...",
+  "ressalva": "Mede a chance estimada de repetição, não a gravidade ...",
+  "aviso": "Estimativa estritamente acadêmica gerada por modelo estatístico ...",
+  "modelo": { "tipo": "LogisticRegression (scikit-learn)", "validacaoCruzada": { "folds": 5 }, "teste": {} }
+}
+```
+
+Sem registros, devolve `disponivel: false` e `nivel: null`. O resultado é uma **estimativa acadêmica** e não substitui avaliação profissional, policial ou médica.
 
 ## Validações principais
 

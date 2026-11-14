@@ -36,10 +36,12 @@ export async function apiRequest(
         : {}),
     });
   } catch (error) {
-    throw new Error(
+    const networkError = new Error(
       `Não foi possível conectar à API em ${API_BASE_URL}. ` +
       'Verifique se o backend está ativo e se o endereço da API está correto.'
     );
+    networkError.status = 0;
+    throw networkError;
   }
 
   if (response.status === 204) {
@@ -49,9 +51,11 @@ export async function apiRequest(
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(
+    const apiError = new Error(
       payload.error || `A API retornou o erro ${response.status}.`
     );
+    apiError.status = response.status;
+    throw apiError;
   }
 
   return payload;

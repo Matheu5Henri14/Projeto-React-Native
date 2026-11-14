@@ -8,12 +8,14 @@ import {
   Alert,
 } from 'react-native';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import AlertButton from '../components/AlertButton';
 import EmergencyCallCard from '../components/EmergencyCallCard';
+import RiskIndicatorCard from '../components/RiskIndicatorCard';
 
 import { emergencyNumbers } from '../config/emergencyNumbers';
 import { colors, spacing } from '../config/theme';
@@ -24,7 +26,35 @@ export default function SecretHub({ navigation }) {
   const [alertSent, setAlertSent] = useState(false);
   const [sendingAlert, setSendingAlert] = useState(false);
 
-  const { token, lock } = useAuth();
+  const { token, unlocked, lock } = useAuth();
+
+  const [indicator, setIndicator] = useState(null);
+  const [indicatorLoading, setIndicatorLoading] = useState(false);
+  const [indicatorError, setIndicatorError] = useState(null);
+
+  const loadIndicator = useCallback(async () => {
+    if (!token || !unlocked) {
+      return;
+    }
+
+    setIndicatorLoading(true);
+    setIndicatorError(null);
+
+    try {
+      const result = await apiRequest('/indicador-risco', { token });
+      setIndicator(result);
+    } catch (error) {
+      setIndicatorError(error.message);
+    } finally {
+      setIndicatorLoading(false);
+    }
+  }, [token, unlocked]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadIndicator();
+    }, [loadIndicator])
+  );
 
   // Sai da área restrita e volta ao bloco de notas.
   const handleExit = async () => {
@@ -125,6 +155,17 @@ export default function SecretHub({ navigation }) {
             />
           ))}
         </View>
+
+        <Text style={styles.sectionTitle}>
+          Indicador do modelo de dados
+        </Text>
+
+        <RiskIndicatorCard
+          data={indicator}
+          loading={indicatorLoading}
+          error={indicatorError}
+          onRetry={loadIndicator}
+        />
       </ScrollView>
     </SafeAreaView>
   );

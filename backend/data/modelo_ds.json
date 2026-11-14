@@ -1,0 +1,248 @@
+{
+  "geradoEm": "2026-11-14",
+  "aviso": "Estimativa estritamente acadêmica gerada por modelo estatístico/aprendizado de máquina a partir de dados públicos (SES/MG - SINAN). Não substitui avaliação profissional, policial ou médica.",
+  "base": {
+    "nome": "Notificações de violência contra a mulher — SES/MG 2026 (SINAN)",
+    "fonte": "https://dados.mg.gov.br/dataset/violencia_ses",
+    "registrosTratados": 38624,
+    "registrosComAlvo": 29869,
+    "prevalenciaRepeticao": 0.546
+  },
+  "alvo": "out_vezes (a violência já havia ocorrido outras vezes?)",
+  "modelo": {
+    "tipo": "LogisticRegression (scikit-learn)",
+    "intercepto": 0.03647604447462528,
+    "numericas": {
+      "nu_idade_n": {
+        "media": 30.415777359280185,
+        "escala": 15.84675547250804,
+        "coef": 0.0666985474894897
+      }
+    },
+    "categoricas": {
+      "cs_raca": {
+        "Amarela": -0.08875920137490391,
+        "Branca": -0.0757610295537846,
+        "Indígena": 0.194390638379991,
+        "Não informado": 0.13639504860403412,
+        "Parda": -0.14320637915412007,
+        "Preta": 0.009103446271806594
+      },
+      "local_ocor": {
+        "Bar ou similar": -0.44138194918110213,
+        "Comercio/Serviços": -0.25189110855495606,
+        "Escola": 0.07025032861230424,
+        "Habitação coletiva": 0.29195930283643834,
+        "Industria/Construção": -0.06952238739772394,
+        "Local de pratica esportiva": -0.6782334996040091,
+        "Não informado": 0.6110176138280832,
+        "Outro": 0.07770968420586873,
+        "Residencia": 0.6571557491335063,
+        "Via pública": -0.2349012107053745
+      },
+      "les_autop": {
+        "Não": -0.36562507259581667,
+        "Não informado": 0.1838944741309474,
+        "Sim": 0.2138931216378809
+      },
+      "viol_fisic": {
+        "Não": 0.207876127186222,
+        "Não informado": -0.23634094193120025,
+        "Sim": 0.0606273379179821
+      },
+      "viol_psico": {
+        "Não": -0.12906602699371214,
+        "Não informado": -0.37505814524198855,
+        "Sim": 0.5362866954087182
+      },
+      "viol_sexu": {
+        "Não": -0.15328337940848796,
+        "Não informado": 0.7625720995877913,
+        "Sim": -0.57712619700628
+      },
+      "num_envolv": {
+        "Dois ou mais": -0.05093076461839877,
+        "Não informado": -0.02733486147218545,
+        "Um": 0.11042814926360335
+      },
+      "autor_sexo": {
+        "Ambos os sexos": 0.43047248152716394,
+        "Feminino": -0.25104294072966254,
+        "Masculino": 0.23759945113774425,
+        "Não informado": -0.3848664687622427
+      },
+      "orient_sex": {
+        "Bissexual": 0.19869085823337493,
+        "Heterossexual": -0.15141978379059856,
+        "Homossexual": 0.08662443084582397,
+        "Não informado": -0.06579654694981031,
+        "Não se aplica": -0.03593643516577825
+      },
+      "ident_gen": {
+        "Não informado": -0.043092475496993445,
+        "Não se aplica": -0.035673426256583075,
+        "Transsexual Homem": 0.15395598903011468,
+        "Transsexual Mulher": 0.027780070100371597,
+        "Travesti": -0.0708076342039037
+      }
+    },
+    "frequencias": {
+      "cs_raca": {
+        "Amarela": 0.005273069679849341,
+        "Branca": 0.3399874450721908,
+        "Indígena": 0.0025109855618330196,
+        "Não informado": 0.018581293157564346,
+        "Parda": 0.5242100857920067,
+        "Preta": 0.10943712073655576
+      },
+      "local_ocor": {
+        "Bar ou similar": 0.01602845783636744,
+        "Comercio/Serviços": 0.013517472274534422,
+        "Escola": 0.02025528353211969,
+        "Habitação coletiva": 0.009123247541326637,
+        "Industria/Construção": 0.0012136430215526261,
+        "Local de pratica esportiva": 0.0022180372462858337,
+        "Não informado": 0.036660389202762086,
+        "Outro": 0.05051265955220757,
+        "Residencia": 0.7640092069470601,
+        "Via pública": 0.08646160284578364
+      },
+      "les_autop": {
+        "Não": 0.5581920903954802,
+        "Não informado": 0.013140824440259468,
+        "Sim": 0.42866708516426033
+      },
+      "viol_fisic": {
+        "Não": 0.3969449675664365,
+        "Não informado": 0.008662900188323917,
+        "Sim": 0.5943921322452396
+      },
+      "viol_psico": {
+        "Não": 0.7235404896421845,
+        "Não informado": 0.011048336472065285,
+        "Sim": 0.26541117388575014
+      },
+      "viol_sexu": {
+        "Não": 0.834191253400293,
+        "Não informado": 0.011257585268884703,
+        "Sim": 0.15455116133082233
+      },
+      "num_envolv": {
+        "Dois ou mais": 0.14605566017995397,
+        "Não informado": 0.03281021134128479,
+        "Um": 0.8211341284787612
+      },
+      "autor_sexo": {
+        "Ambos os sexos": 0.02276626909395271,
+        "Feminino": 0.4793889935132873,
+        "Masculino": 0.4565808746599707,
+        "Não informado": 0.041263862732789286
+      },
+      "orient_sex": {
+        "Bissexual": 0.008704749947687801,
+        "Heterossexual": 0.7477715003138732,
+        "Homossexual": 0.02059008160703076,
+        "Não informado": 0.1198158610587989,
+        "Não se aplica": 0.10311780707260933
+      },
+      "ident_gen": {
+        "Não informado": 0.17940991839296924,
+        "Não se aplica": 0.8060682151077632,
+        "Transsexual Homem": 0.0024691358024691358,
+        "Transsexual Mulher": 0.012010880937434609,
+        "Travesti": 4.1849759363883655e-05
+      }
+    }
+  },
+  "faixas": {
+    "moderado": 0.5301712162805395,
+    "alto": 0.6013268500892004
+  },
+  "metricas": {
+    "validacaoCruzada": {
+      "folds": 5,
+      "estrategia": "StratifiedKFold",
+      "regressaoLogistica": {
+        "accuracy": {
+          "media": 0.6175,
+          "desvio": 0.008
+        },
+        "precision": {
+          "media": 0.6149,
+          "desvio": 0.0061
+        },
+        "recall": {
+          "media": 0.8013,
+          "desvio": 0.007
+        },
+        "f1": {
+          "media": 0.6958,
+          "desvio": 0.0059
+        },
+        "roc_auc": {
+          "media": 0.6429,
+          "desvio": 0.0087
+        }
+      },
+      "randomForest": {
+        "accuracy": {
+          "media": 0.6316,
+          "desvio": 0.0077
+        },
+        "precision": {
+          "media": 0.6186,
+          "desvio": 0.005
+        },
+        "recall": {
+          "media": 0.8479,
+          "desvio": 0.0094
+        },
+        "f1": {
+          "media": 0.7153,
+          "desvio": 0.0063
+        },
+        "roc_auc": {
+          "media": 0.6665,
+          "desvio": 0.007
+        }
+      }
+    },
+    "teste": {
+      "regressaoLogistica": {
+        "accuracy": 0.6252,
+        "precision": 0.6236,
+        "recall": 0.7912,
+        "f1": 0.6975,
+        "roc_auc": 0.6478
+      },
+      "randomForest": {
+        "accuracy": 0.6463,
+        "precision": 0.6305,
+        "recall": 0.851,
+        "f1": 0.7243,
+        "roc_auc": 0.6846
+      },
+      "baselineAcuracia": 0.546
+    },
+    "matrizConfusaoRegressaoLogistica": {
+      "linhas": [
+        "real Não",
+        "real Sim"
+      ],
+      "colunas": [
+        "previsto Não",
+        "previsto Sim"
+      ],
+      "valores": [
+        [
+          1154,
+          1558
+        ],
+        [
+          681,
+          2581
+        ]
+      ]
+    }
+  }
+}
