@@ -47,3 +47,37 @@ export const formatDisplay = formatCardDate;
 export const toInputString = toInputValue;
 export const formatDateTimeInput = maskDateTime;
 export const parseDateTime = parseInputValue;
+
+const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+export function formatRelativeDate(value) {
+  const d = new Date(value);
+
+  if (Number.isNaN(d.getTime())) return '';
+
+  const startOfDay = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+  const diffDays = Math.round(
+    (startOfDay(new Date()) - startOfDay(d)) / 86400000
+  );
+
+  if (diffDays === 0) return 'Hoje';
+  if (diffDays === 1) return 'Ontem';
+  if (diffDays > 1 && diffDays < 7) return WEEKDAYS[d.getDay()];
+
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+const MONTHS_LONG = [
+  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
+];
+
+export function formatLongDate(value) {
+  const d = new Date(value);
+
+  if (Number.isNaN(d.getTime())) return '';
+
+  return `${d.getDate()} de ${MONTHS_LONG[d.getMonth()]} de ${d.getFullYear()}`;
+}
