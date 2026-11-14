@@ -1,15 +1,18 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default function NoteCard({ title, preview, date, onPress }) {
+export default function NoteCard({ title, preview, date, onPress, onLongPress }) {
   return (
-    <TouchableOpacity 
-      style={styles.card} 
-      onPress={onPress} 
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      onLongPress={onLongPress}
       activeOpacity={0.7}
     >
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.preview} numberOfLines={1}>{preview}</Text>
+      <Text style={styles.title} numberOfLines={1}>{title}</Text>
+      {!!preview && (
+        <Text style={styles.preview} numberOfLines={1}>{preview}</Text>
+      )}
       <Text style={styles.date}>{date}</Text>
     </TouchableOpacity>
   );

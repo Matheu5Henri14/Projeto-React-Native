@@ -1,20 +1,23 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 
-export default function CustomInput({ 
-  label, 
-  placeholder, 
-  value, 
-  onChangeText, 
-  secureTextEntry = false, 
+export default function CustomInput({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  secureTextEntry = false,
   keyboardType = 'default',
-  maxLength
+  maxLength,
+  autoCapitalize = 'none',
+  editable = true,
+  error,
 }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, !!error && styles.inputError]}
         placeholder={placeholder}
         placeholderTextColor="#B5B5BA"
         value={value}
@@ -22,8 +25,11 @@ export default function CustomInput({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         maxLength={maxLength}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize}
+        editable={editable}
+        autoCorrect={false}
       />
+      {!!error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -48,5 +54,13 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     fontSize: 15,
     color: '#1C1C1E',
+  },
+  inputError: {
+    borderColor: '#D32F2F',
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#D32F2F',
+    marginTop: 4,
   },
 });

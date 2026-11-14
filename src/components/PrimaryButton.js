@@ -1,14 +1,31 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import {
+  ActivityIndicator,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from 'react-native';
 
-export default function PrimaryButton({ title, onPress }) {
+export default function PrimaryButton({
+  title,
+  onPress,
+  loading = false,
+  disabled = false,
+}) {
+  const blocked = loading || disabled;
+
   return (
-    <TouchableOpacity 
-      style={styles.button} 
-      onPress={onPress} 
+    <TouchableOpacity
+      style={[styles.button, blocked && styles.buttonDisabled]}
+      onPress={onPress}
       activeOpacity={0.8}
+      disabled={blocked}
     >
-      <Text style={styles.buttonText}>{title}</Text>
+      {loading ? (
+        <ActivityIndicator color="#1C1C1E" />
+      ) : (
+        <Text style={styles.buttonText}>{title}</Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -21,6 +38,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    minHeight: 48,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: {
     color: '#1C1C1E',
