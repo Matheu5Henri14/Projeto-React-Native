@@ -14,17 +14,76 @@ import {
 import CustomInput from '../components/CustomInput';
 import PrimaryButton from '../components/PrimaryButton';
 
+import { useAuth } from '../config/AuthContext';
+import { formatPhone, isValidPhone } from '../config/phone';
+
 export default function RegisterScreen({ navigation }) {
+  const { register, loading } = useAuth();
+
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [codigoAcesso, setCodigoAcesso] = useState('');
   const [confirmarCodigo, setConfirmarCodigo] = useState('');
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
 
-  const handleRegister = () => {
-    if (navigation) {
-      navigation.navigate('NotesList');
+  const validate = () => {
+    const next = {};
+
+    if (nome.trim().length < 2) {
+      next.nome = 'Informe seu nome.';
+    }
+
+    if (!isValidPhone(telefone)) {
+      next.telefone = 'Informe o telefone com DDD.';
+    }
+
+    if (senha.length < 8) {
+      next.senha = 'A senha deve ter ao menos 8 caracteres.';
+    }
+
+    if (confirmarSenha !== senha) {
+      next.confirmarSenha = 'As senhas não conferem.';
+    }
+
+    if (!/^\d{4,8}$/.test(codigoAcesso)) {
+      next.codigoAcesso = 'Use de 4 a 8 números.';
+    } else if (codigoAcesso === senha) {
+      next.codigoAcesso = 'O código deve ser diferente da senha.';
+    }
+
+    if (confirmarCodigo !== codigoAcesso) {
+      next.confirmarCodigo = 'Os códigos não conferem.';
+    }
+
+    setErrors(next);
+
+    return Object.keys(next).length === 0;
+  };
+
+  const handleRegister = async () => {
+    setApiError('');
+
+    if (loading || !validate()) {
+      return;
+    }
+
+    try {
+      await register({
+        nome: nome.trim(),
+        telefone: telefone.replace(/\D/g, ''),
+        senha,
+        codigoAcesso,
+      });
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'NotesList' }],
+      });
+    } catch (error) {
+      setApiError(error.message);
     }
   };
 
@@ -55,6 +114,9 @@ export default function RegisterScreen({ navigation }) {
             placeholder="Seu nome"
             value={nome}
             onChangeText={setNome}
+            autoCapitalize="words"
+            error={errors.nome}
+            editable={!loading}
           />
 
           <CustomInput
@@ -62,7 +124,9 @@ export default function RegisterScreen({ navigation }) {
             placeholder="(11) 9XXXX-XXXX"
             keyboardType="phone-pad"
             value={telefone}
-            onChangeText={setTelefone}
+            onChangeText={(text) => setTelefone(formatPhone(text))}
+            error={errors.telefone}
+            editable={!loading}
           />
 
           <CustomInput
@@ -71,6 +135,8 @@ export default function RegisterScreen({ navigation }) {
             secureTextEntry
             value={senha}
             onChangeText={setSenha}
+            error={errors.senha}
+            editable={!loading}
           />
 
           <CustomInput
@@ -79,6 +145,8 @@ export default function RegisterScreen({ navigation }) {
             secureTextEntry
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
+            error={errors.confirmarSenha}
+            editable={!loading}
           />
 
           <CustomInput
@@ -86,9 +154,11 @@ export default function RegisterScreen({ navigation }) {
             placeholder="• • • •"
             secureTextEntry
             keyboardType="numeric"
-            maxLength={4}
+            maxLength={8}
             value={codigoAcesso}
             onChangeText={setCodigoAcesso}
+            error={errors.codigoAcesso}
+            editable={!loading}
           />
 
           <CustomInput
@@ -96,15 +166,20 @@ export default function RegisterScreen({ navigation }) {
             placeholder="• • • •"
             secureTextEntry
             keyboardType="numeric"
-            maxLength={4}
+            maxLength={8}
             value={confirmarCodigo}
             onChangeText={setConfirmarCodigo}
+            error={errors.confirmarCodigo}
+            editable={!loading}
           />
 
+          {!!apiError && <Text style={styles.apiError}>{apiError}</Text>}
+
           <View style={styles.buttonContainer}>
-            <PrimaryButton 
-              title="Criar conta" 
-              onPress={handleRegister} 
+            <PrimaryButton
+              title="Criar conta"
+              onPress={handleRegister}
+              loading={loading}
             />
           </View>
 
@@ -151,6 +226,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 10,
+  },
+  apiError: {
+    fontSize: 13,
+    color: '#D32F2F',
+    marginBottom: 8,
   },
   footer: {
     flexDirection: 'row',
