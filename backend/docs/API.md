@@ -25,6 +25,7 @@ Envie `Authorization: Bearer <token>`. O login emite token normal; o PIN é vali
 | PUT | `/notas/:id` | Token | `{title, content?}` |
 | DELETE | `/notas/:id` | Token | Remove nota |
 | GET | `/contatos` | Desbloqueado | Lista contatos |
+| GET | `/contatos/:id` | Desbloqueado | Consulta um contato (404 se não for do usuário) |
 | POST | `/contatos` | Desbloqueado | `{name, phone, relation?, receiveAlerts?, priority?}` |
 | PUT | `/contatos/:id` | Desbloqueado | Mesmo corpo de criação |
 | DELETE | `/contatos/:id` | Desbloqueado | Remove contato |

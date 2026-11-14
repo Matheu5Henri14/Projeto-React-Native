@@ -19,6 +19,7 @@ import ChipSelector from '../components/ChipSelector';
 import SupportButton from '../components/SupportButton';
 
 import { useRecords } from '../config/RecordsContext';
+import useQuickExit from '../config/useQuickExit';
 import { confirmAction } from '../config/confirm';
 import { recordTypes } from '../config/recordTypes';
 
@@ -32,6 +33,7 @@ import { colors, spacing } from '../config/theme';
 
 export default function NewRecordScreen({ navigation, route }) {
   const recordId = route.params?.recordId;
+  const handleExit = useQuickExit(navigation);
 
   const {
     records,
@@ -174,6 +176,7 @@ export default function NewRecordScreen({ navigation, route }) {
           }
           subtitle="Anote o que aconteceu enquanto você lembra dos detalhes."
           onBack={() => navigation.goBack()}
+          onExit={handleExit}
         />
 
         <ScrollView

@@ -19,7 +19,7 @@ Todas as telas consomem a API real; não há dados simulados (`mockData`, `MOCK_
 | Login e cadastro (`LoginScreen`, `RegisterScreen`) | `POST /auth/login` e `POST /auth/register`, com loading e mensagens de erro da API |
 | Notas do disfarce (`NotesListScreen`, `NoteEditorScreen`) | CRUD real em `/notas` via `NotesContext` |
 | Gatilho camuflado | PIN (4 a 8 números) digitado na **barra de busca** da lista de notas + tecla de confirmar → `POST /auth/unlock` → abre a Área de Apoio. PIN errado não mostra erro: o texto só filtra as notas |
-| Saída Rápida | Botão "Sair" nas telas da Área de Apoio bloqueia na hora (`POST /auth/lock` em segundo plano) e volta à lista de notas carregada da API |
+| Saída Rápida | Botão "Sair" em **todas** as telas da Área de Apoio (inclusive os formulários de novo contato e novo registro) bloqueia na hora (`POST /auth/lock` em segundo plano) e volta à lista de notas carregada da API |
 | Contatos de apoio e Registros sigilosos | CRUD real em `/contatos` e `/registros` |
 | Alerta silencioso | Registra a solicitação em `POST /alertas` (não envia SMS/WhatsApp) |
 | Data Science | Card "Indicador de risco estimado" no `SecretHub` (`GET /indicador-risco`) com aviso de estimativa acadêmica |
@@ -309,6 +309,7 @@ Exemplo de login: `{"telefone":"(43) 99999-9999","senha":"umaSenhaSegura123"}`. 
 | Método | Rota | Descrição |
 |---|---|---|
 | GET | `/contatos` | Lista contatos da rede de apoio |
+| GET | `/contatos/:id` | Consulta um contato (404 se não for do usuário) |
 | POST | `/contatos` | Cria contato (`name`, `phone`, `relation?`, `receiveAlerts?`, `priority?`) |
 | PUT | `/contatos/:id` | Atualiza contato |
 | DELETE | `/contatos/:id` | Exclui contato |
@@ -382,6 +383,19 @@ A API valida que latitude e longitude sejam informadas juntas. A localização �
 | Data Science: modelagem e validação cruzada | `dataScience/` (seção 7) | _a preencher_ |
 | Integração do modelo no app | `backend/src/routes/indicator.routes.js`, `src/components/RiskIndicatorCard.js` | _a preencher_ |
 | Documentação e `USO_IA.md` | `README.md`, `USO_IA.md` | _a preencher_ |
+
+### Exigências da entrega → onde estão
+
+| Exigência | Onde está |
+|---|---|
+| Telas do disfarce integradas à API, sem dados mocados | `src/screens/` (Login, Register, NotesList, NoteEditor), `src/config/NotesContext.js`, `src/services/api.js` |
+| Gatilho camuflado (PIN na busca) e Saída Rápida | `NotesListScreen`, `src/config/useQuickExit.js`, `src/components/BackHeader.js` |
+| API REST (GET, GET por id, POST, PUT, DELETE) com validação e erros 400/404/500 | `backend/src/routes/`, `backend/docs/API.md` |
+| Governança da base (link oficial SES/MG) | `dataScience/README.md` e seção 1 do notebook |
+| Modelo supervisionado, validação cruzada estratificada (5 folds) e métricas completas | `dataScience/Entrega2_DS_Modelo.ipynb`, seção 7 |
+| Dependências do notebook | `dataScience/requirements.txt` |
+| Resultado do modelo exibido no app com aviso acadêmico | `GET /indicador-risco`, `src/components/RiskIndicatorCard.js`, seção 7.7 do notebook |
+| Uso de IA | `USO_IA.md` |
 
 ## 9. Documentação adicional
 
