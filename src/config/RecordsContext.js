@@ -1,33 +1,142 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
+import { useAuth } from './AuthContext';
+import { apiRequest } from '../services/api';
 
 const RecordsContext = createContext(null);
 
-// Estado em memória, só para o protótipo funcionar.
-// TODO: trocar por persistência local protegida seguindo a tabela
-// REGISTRO_SIGILOSO do DER (id_registro, id_usuario, descricao, data_registro).
 export function RecordsProvider({ children }) {
+  const { token, unlocked } = useAuth();
+
   const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Consulta os registros sigilosos da usuária.
+  const refreshRecords = useCallback(async () => {
+    if (!token || !unlocked) {
+      setRecords([]);
+      return [];
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await apiRequest('/registros', {
+        token,
+      });
+
+      const data = result.data || [];
+
+      setRecords(data);
+
+      return data;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token, unlocked]);
+
+  // Atualiza os registros ao desbloquear a área restrita.
+  useEffect(() => {
+    if (token && unlocked) {
+      refreshRecords().catch(() => {});
+    } else {
+      setRecords([]);
+    }
+  }, [token, unlocked, refreshRecords]);
+
+  // Cria um novo registro.
+  const addRecord = useCallback(
+    async (data) => {
+      const result = await apiRequest('/registros', {
+        method: 'POST',
+        body: data,
+        token,
+      });
+
+      await refreshRecords();
+
+      return result;
+    },
+    [token, refreshRecords]
+  );
+
+  // Atualiza um registro.
+  const updateRecord = useCallback(
+    async (id, data) => {
+      const result = await apiRequest(`/registros/${id}`, {
+        method: 'PUT',
+        body: data,
+        token,
+      });
+
+      await refreshRecords();
+
+      return result;
+    },
+    [token, refreshRecords]
+  );
+
+  // Exclui um registro.
+  const removeRecord = useCallback(
+    async (id) => {
+      await apiRequest(`/registros/${id}`, {
+        method: 'DELETE',
+        token,
+      });
+
+      await refreshRecords();
+    },
+    [token, refreshRecords]
+  );
 
   const value = useMemo(
     () => ({
       records,
-      addRecord: (data) =>
-        setRecords((prev) => [...prev, { id: String(Date.now()), ...data }]),
-      updateRecord: (id, data) =>
-        setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, ...data } : r))),
-      removeRecord: (id) =>
-        setRecords((prev) => prev.filter((r) => r.id !== id)),
+      loading,
+      error,
+      refreshRecords,
+      addRecord,
+      updateRecord,
+      removeRecord,
     }),
-    [records]
+    [
+      records,
+      loading,
+      error,
+      refreshRecords,
+      addRecord,
+      updateRecord,
+      removeRecord,
+    ]
   );
 
-  return <RecordsContext.Provider value={value}>{children}</RecordsContext.Provider>;
+  return (
+    <RecordsContext.Provider value={value}>
+      {children}
+    </RecordsContext.Provider>
+  );
 }
 
 export function useRecords() {
-  const ctx = useContext(RecordsContext);
-  if (!ctx) {
-    throw new Error('useRecords deve ser usado dentro de <RecordsProvider>');
+  const context = useContext(RecordsContext);
+
+  if (!context) {
+    throw new Error(
+      'useRecords deve ser usado dentro de <RecordsProvider>'
+    );
   }
-  return ctx;
+
+  return context;
 }

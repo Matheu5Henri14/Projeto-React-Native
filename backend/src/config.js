@@ -1,0 +1,5 @@
+require('dotenv').config();
+const required=['JWT_SECRET','DB_HOST','DB_NAME','DB_USER','DB_PASSWORD'];
+for(const k of required) if(!process.env[k]) throw new Error(`Variável obrigatória ausente: ${k}`);
+if(process.env.JWT_SECRET.length<32) throw new Error('JWT_SECRET deve ter ao menos 32 caracteres.');
+module.exports={port:Number(process.env.PORT||3333),jwtSecret:process.env.JWT_SECRET,jwtExpiresIn:process.env.JWT_EXPIRES_IN||'2h',bcryptRounds:Math.min(14,Math.max(10,Number(process.env.BCRYPT_ROUNDS||12))),corsOrigin:process.env.CORS_ORIGIN||'*',db:{host:process.env.DB_HOST,port:Number(process.env.DB_PORT||3306),database:process.env.DB_NAME,user:process.env.DB_USER,password:process.env.DB_PASSWORD,waitForConnections:true,connectionLimit:Number(process.env.DB_CONNECTION_LIMIT||10),queueLimit:0,timezone:'Z'}};

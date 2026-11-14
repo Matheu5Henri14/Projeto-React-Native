@@ -1,0 +1,4 @@
+const jwt=require('jsonwebtoken');const {jwtSecret}=require('../config');const HttpError=require('../utils/httpError');
+function auth(req,res,next){try{const h=req.headers.authorization||'';if(!h.startsWith('Bearer '))throw new HttpError(401,'Token não informado.');const p=jwt.verify(h.slice(7),jwtSecret);req.user={id:Number(p.sub),unlocked:p.unlocked===true};next()}catch(e){next(e instanceof HttpError?e:new HttpError(401,'Token inválido ou expirado.'))}}
+function unlocked(req,res,next){if(!req.user?.unlocked)return next(new HttpError(403,'Desbloqueie a área restrita para continuar.'));next()}
+module.exports={auth,unlocked};
