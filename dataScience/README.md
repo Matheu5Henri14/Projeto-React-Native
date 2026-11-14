@@ -19,7 +19,7 @@ Pacote de Data Science do Projeto Integrador (Entregas 2, 3 e 4), no padrão do 
 4. Tratamento (padronização, nulos, duplicatas, imputação, outliers)
 5. Análise exploratória (EDA)
 6. Plano da modelagem
-7. **Modelagem preditiva com validação cruzada (Entregas 3 e 4)**
+7. **Modelagem preditiva com validação cruzada (Entregas 3 e 4)**, incluindo 7.7 (conferência com a API)
 8. Conclusões e checklist
 
 ## Modelo (seção 7)
@@ -31,9 +31,21 @@ Pacote de Data Science do Projeto Integrador (Entregas 2, 3 e 4), no padrão do 
 - **Resultado (teste, Regressão Logística):** acurácia 62,5%, precisão 62,4%, recall 79,1%, F1 69,8%, AUC 0,65. O baseline acerta 54,6%. Ou seja: **há sinal, mas moderado**. Random Forest tem AUC 0,68.
 - **Faixas de risco** (Baixo / Moderado / Alto): tercis da probabilidade prevista no treino; no teste a taxa real de repetição sobe de 39,5% (Baixo) para 58,7% (Moderado) e 66,9% (Alto).
 
+## Exigências → onde estão
+
+| Exigência | Onde está |
+|---|---|
+| Link oficial da base | Seção 1 do notebook e este README |
+| Modelo supervisionado + baseline | Seção 7 (Baseline, Regressão Logística, Random Forest) |
+| Validação cruzada | Seção 7, `StratifiedKFold` com 5 folds (média ± desvio-padrão) |
+| Métricas e matriz de confusão | Seção 7 (acurácia, precisão, recall, F1, AUC, matriz, curva ROC) |
+| Dependências | `requirements.txt` |
+| Notebook executado | Todas as células têm saída gravada |
+| Integração com o app | Seção 7.7 e `backend/data/modelo_ds.json` |
+
 ## Integração com o aplicativo
 
-A última célula grava `../backend/data/modelo_ds.json` (coeficientes da Regressão Logística, frequências por categoria, cortes das faixas e todas as métricas). A API (`GET /api/indicador-risco`) aplica essa fórmula ao perfil derivado dos registros da usuária, e o app exibe o resultado no card do `SecretHub`, sempre com o **aviso de estimativa acadêmica**.
+A última célula grava `../backend/data/modelo_ds.json` (coeficientes da Regressão Logística, frequências por categoria, cortes das faixas e todas as métricas). A seção 7.7 do notebook confere a integração: para 4 perfis de uso do app, a probabilidade calculada pelo `scikit-learn` e a calculada pela fórmula da API são idênticas (diferença máxima 0,0), e o card do app mostra esses mesmos números. A API (`GET /api/indicador-risco`) aplica essa fórmula ao perfil derivado dos registros da usuária, e o app exibe o resultado no card do `SecretHub`, sempre com o **aviso de estimativa acadêmica**.
 
 > **Aviso:** o indicador é uma estimativa estatística a partir de dados públicos de notificação. Mede a chance de repetição em casos parecidos, não a gravidade nem o perigo atual, e **não substitui** avaliação profissional, policial ou médica. Em risco: **190**; orientação: **180**.
 
